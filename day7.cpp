@@ -1,10 +1,8 @@
 
 
-//TODO I should just use a binary tree, left child is addition and right child is multiplication, to verify which chain of operators are correct just check the leaves.
-#include <algorithm>
 #include <iostream>
-#include <map>
 #include <ostream>
+#include <queue>
 #include <stack>
 #include<vector>
 using std::vector;
@@ -20,34 +18,52 @@ auto input = vector<vector<int>>{
 {292, 11, 6, 16, 20}
 };
 
-int calculate(std::stack<int> input) {
-  std::stack<int> output;
+std::vector<int> calculate(std::stack<int> input) {
+  auto results = vector<int>{};
+  std::queue<int> output;
   auto lh = input.top(); input.pop();
   auto rh = input.top(); input.pop();
+  //results from using operations on lh and rh, rh will always be a new value from the input equation
+  // while lh will be results from previous computations stored in output, which will be a fifo queue while input is a lifo stack.
   output.push(lh + rh);
   output.push(lh * rh);
 
-  rh = input.top(); input.pop();
-  for (int i = 0; i < output.size(); i++) {
+  // These are the values from the left-associate equations
+  while (!input.empty()) {
+    rh = input.top(); input.pop();
+    auto end = output.size();
+    for (int i = 0; i < end; i++) {
+      //left hand is the results from previous computations
+      lh = output.front(); output.pop();
 
+      output.push(lh + rh);
+      output.push(lh * rh);
+    }
   }
-  
-
+  // convert it to a vector, there might be some implicit conversions
+  while (!output.empty()) {
+    results.push_back(output.front()); output.pop();
+  }
+  return results;
 }
 
 
 std::stack<int> convertToStack(vector<int> input) {
   std::stack<int> s;
-  for (int i = input.size(); i > 0; i--) {
+  for (int i = input.size()-1; i > 0; i--) {
     s.push(input[i]);
   }
   return s;
-
 }
 
 
 int main(){
-  auto working_value = input[1];
+  auto working_value = input[7];
   auto s = convertToStack(working_value);
+  auto candidates = calculate(s);
+  for (auto c : candidates) {
+    std::cout << c << std::endl;
+  }
+
 
 }
