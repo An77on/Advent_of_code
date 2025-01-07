@@ -30,22 +30,27 @@ std::string convertToIDRepresentation(std::string input){
   }
 
 std::string compress(std::string input) {
-  std::string result = "";
-
+  std::string result;
   for(int i = 0; i < input.size(); i++) {
     auto c = input[i];
+    // if we find a '.' char we can compress by inserting the last character that is not a '.' character.
+    if(c == '.') {
+      auto index = input.find_last_not_of('.');
 
-    if(c == '.') { //an empty space we can recreate
-      auto index = result.find_last_not_of('.');
-      auto nextChar = result[index];
-      result.erase(index + 1);
-      result.push_back(nextChar);
-    } else {
-      result.push_back(c);
+      // break so it does not continue to iterate on our inserted '.' characters.
+      if (index < i) {
+        break;
+      }
+
+      // move the last valid character to the empy slot "compress"
+      auto nextChar = input[index];
+      input.erase(input.begin() + index);
+      input[i] = nextChar;
+      input.push_back('.');
     }
   }
 
-  return result;
+  return input;
 }
 
 int main() {
