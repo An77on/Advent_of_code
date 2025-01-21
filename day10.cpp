@@ -2,9 +2,10 @@
 // Created by Anton on 2025-01-07.
 //
 #include <iostream>
+#include <vector>
 #include <ostream>
 #include <stack>
-#include <vector>
+
 using std::vector;
 
 auto puzzleInput = vector<vector<int> >{
